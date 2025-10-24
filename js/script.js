@@ -79,8 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Funções de API
 async function loginUser(email, senha) {
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('https://timeright.somee.com/somee-api.php?action=login', {
             method: 'POST',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, senha })
         });
@@ -92,8 +93,9 @@ async function loginUser(email, senha) {
 
 async function registerUser(nome, email, senha) {
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('https://timeright.somee.com/somee-api.php?action=register', {
             method: 'POST',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })
         });
@@ -102,6 +104,7 @@ async function registerUser(nome, email, senha) {
         return { success: false, error: 'Erro na conexão' };
     }
 }
+
 
     });
 });
