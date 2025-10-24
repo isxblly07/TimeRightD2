@@ -1,10 +1,10 @@
-// APIs do Sistema TimeRight
-const API_BASE_URL = '/api';
+// APIs conectadas ao Somee
+const API_BASE_URL = 'https://timeright.somee.com';
 
 // Listar todos os usuários
 async function getAllUsers() {
     try {
-        const response = await fetch(`${API_BASE_URL}/usuario`, {
+        const response = await fetch(`${API_BASE_URL}/api.php`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -16,23 +16,20 @@ async function getAllUsers() {
         return await response.json();
     } catch (error) {
         console.error('Error fetching users:', error);
-        return { success: false, error: 'Erro ao buscar usuários' };
+        return [];
     }
 }
 
 // Criar novo usuário (Cadastro)
 async function registerUser(nome, email, senha) {
     try {
-        const response = await fetch(`${API_BASE_URL}/usuario`, {
+        const response = await fetch(`${API_BASE_URL}/api.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })
         });
         
         if (!response.ok) {
-            if (response.status === 400) {
-                return { success: false, error: 'Dados inválidos' };
-            }
             throw new Error(`HTTP ${response.status}`);
         }
         
@@ -69,5 +66,15 @@ async function loginUser(email, senha) {
     } catch (error) {
         console.error('Login error:', error);
         return { success: false, error: 'Erro na conexão com o servidor' };
+    }
+}
+
+// Verificar se API está online
+async function checkApiStatus() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api.php`);
+        return response.ok;
+    } catch (error) {
+        return false;
     }
 }
