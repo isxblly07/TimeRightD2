@@ -68,13 +68,3 @@ async function loginUser(email, senha) {
         return { success: false, error: 'Erro na conexão com o servidor' };
     }
 }
-
-// Verificar se API está online
-async function checkApiStatus() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api.php`);
-        return response.ok;
-    } catch (error) {
-        return false;
-    }
-}
