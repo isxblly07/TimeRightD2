@@ -75,5 +75,33 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             alert('Erro na conexão. Tente novamente.');
         }
+        
+// Funções de API
+async function loginUser(email, senha) {
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+        return await response.json();
+    } catch (error) {
+        return { success: false, error: 'Erro na conexão' };
+    }
+}
+
+async function registerUser(nome, email, senha) {
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha })
+        });
+        return await response.json();
+    } catch (error) {
+        return { success: false, error: 'Erro na conexão' };
+    }
+}
+
     });
 });
