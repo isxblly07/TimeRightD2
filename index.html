@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeRight</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">TimeRight</h1>
+        <button class="enter-btn" onclick="showLogin()">Entrar</button>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            
+            <div class="form-container">
+                <div class="form-toggle">
+                    <button id="loginTab" class="tab-btn active" onclick="showLoginForm()">Login</button>
+                    <button id="registerTab" class="tab-btn" onclick="showRegisterForm()">Cadastro</button>
+                </div>
+
+                <form id="loginForm" class="form active">
+                    <h2>Login</h2>
+                    <input id="loginEmail" type="email" placeholder="Email" required>
+                    <input id="loginSenha" type="password" placeholder="Senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+
+                <form id="registerForm" class="form">
+                    <h2>Cadastro</h2>
+                    <input id="registerNome" type="text" placeholder="Nome" required>
+                    <input id="registerEmail" type="email" placeholder="Email" required>
+                    <input id="registerSenha" type="password" placeholder="Senha" required>
+                    <input id="registerConfirmarSenha" type="password" placeholder="Confirmar Senha" required>
+                    <button type="submit">Cadastrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

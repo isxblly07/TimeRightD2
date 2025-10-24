@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/login.js": {
+      "runtime": "@vercel/node"
+    },
+    "api/register.js": {
+      "runtime": "@vercel/node"
+    }
+  }
+}
