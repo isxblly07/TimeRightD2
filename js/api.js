@@ -23,3 +23,4 @@ async function registerUser(nome, email, senha) {
         return { success: false, error: 'Erro na conexão' };
     }
 }
+
