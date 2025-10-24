@@ -75,36 +75,5 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             alert('Erro na conexão. Tente novamente.');
         }
-        
-// Funções de API
-async function loginUser(email, senha) {
-    try {
-        const response = await fetch('https://timeright.somee.com/somee-api.php?action=login', {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, senha })
-        });
-        return await response.json();
-    } catch (error) {
-        return { success: false, error: 'Erro na conexão' };
-    }
-}
-
-async function registerUser(nome, email, senha) {
-    try {
-        const response = await fetch('https://timeright.somee.com/somee-api.php?action=register', {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, email, senha })
-        });
-        return await response.json();
-    } catch (error) {
-        return { success: false, error: 'Erro na conexão' };
-    }
-}
-
-
     });
 });
