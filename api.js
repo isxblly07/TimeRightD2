@@ -1,47 +1,30 @@
-// ===== CONEXÃO COM SEU BACKEND =====
-
-// URL do seu backend
-const API_URL = 'https://timeright.somee.com/somee-api.php';
-
-// Função para conectar ao Somee
-async function connectToSomee(action, data = null) {
-    try {
-        const config = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-        
-        const response = await fetch(`${API_URL}?action=${action}`, config);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Erro na conexão:', error);
-        throw error;
-    }
-}
+// URL da API
+const API_URL = '/api';
 
 // Função de login
 async function loginUser(email, senha) {
     try {
-        const result = await connectToSomee('login', { email, senha });
-        return result;
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+        return await response.json();
     } catch (error) {
-       // Função de login
-async function loginUser(email, senha) {
-    const result = await connectToSomee('login', { email, senha });
-    return result;
+        return { success: false, error: 'Erro na conexão' };
+    }
 }
 
-// Função de cadastro  
+// Função de cadastro
 async function registerUser(nome, email, senha) {
-    const result = await connectToSomee('register', { nome, email, senha });
-    return result;
-}
-
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha })
+        });
+        return await response.json();
+    } catch (error) {
+        return { success: false, error: 'Erro na conexão' };
+    }
 }
