@@ -32,27 +32,16 @@ async function loginUser(email, senha) {
         const result = await connectToSomee('login', { email, senha });
         return result;
     } catch (error) {
-        // Fallback offline
-        return {
-            success: true,
-            user: {
-                nome: email.split('@')[0],
-                email: email
-            }
-        };
-    }
+       // Função de login
+async function loginUser(email, senha) {
+    const result = await connectToSomee('login', { email, senha });
+    return result;
 }
 
-// Função de cadastro
+// Função de cadastro  
 async function registerUser(nome, email, senha) {
-    try {
-        const result = await connectToSomee('register', { nome, email, senha });
-        return result;
-    } catch (error) {
-        // Fallback offline
-        return {
-            success: true,
-            user: { nome, email }
-        };
-    }
+    const result = await connectToSomee('register', { nome, email, senha });
+    return result;
+}
+
 }
