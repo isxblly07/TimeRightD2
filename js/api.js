@@ -1,47 +1,62 @@
-// APIs conectadas ao Somee
-const API_BASE_URL = 'https://timeright.somee.com';
+// Sistema híbrido - tenta Somee, fallback para Vercel
+const SOMEE_URL = 'https://timeright.somee.com/api.php';
+const VERCEL_URL = '/api/usuario';
 
 // Listar todos os usuários
 async function getAllUsers() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api.php`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        // Tenta Somee primeiro
+        const response = await fetch(SOMEE_URL);
+        if (response.ok) {
+            return await response.json();
         }
-        
+    } catch (error) {
+        console.log('Somee indisponível, usando Vercel');
+    }
+    
+    // Fallback para Vercel
+    try {
+        const response = await fetch(VERCEL_URL);
         return await response.json();
     } catch (error) {
-        console.error('Error fetching users:', error);
         return [];
     }
 }
 
-// Criar novo usuário (Cadastro)
+// Cadastrar usuário
 async function registerUser(nome, email, senha) {
     try {
-        const response = await fetch(`${API_BASE_URL}/api.php`, {
+        // Tenta Somee primeiro
+        const response = await fetch(SOMEE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })
         });
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (response.ok) {
+            const user = await response.json();
+            return { success: true, user, message: 'Usuário cadastrado no Somee!' };
         }
+    } catch (error) {
+        console.log('Somee indisponível, usando Vercel');
+    }
+    
+    // Fallback para Vercel
+    try {
+        const response = await fetch(VERCEL_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha })
+        });
         
         const user = await response.json();
-        return { success: true, user, message: 'Usuário cadastrado com sucesso!' };
+        return { success: true, user, message: 'Usuário cadastrado no Vercel!' };
     } catch (error) {
-        console.error('Register error:', error);
         return { success: false, error: 'Erro ao cadastrar usuário' };
     }
 }
 
-// Login (busca usuário por email e senha)
+// Login
 async function loginUser(email, senha) {
     try {
         const users = await getAllUsers();
@@ -64,7 +79,6 @@ async function loginUser(email, senha) {
         
         return { success: false, error: 'Email ou senha incorretos' };
     } catch (error) {
-        console.error('Login error:', error);
-        return { success: false, error: 'Erro na conexão com o servidor' };
+        return { success: false, error: 'Erro na conexão' };
     }
 }
