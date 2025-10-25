@@ -1,50 +1,48 @@
-// Sistema que funciona sempre
-async function getAllUsers() {
-    try {
-        const response = await fetch('/api/usuario');
-        return await response.json();
-    } catch (error) {
-        return [];
-    }
+// js/api.js
+
+const API_BASE_URL = "http://localhost:3000/api"; // URL do seu backend Node.js
+
+// 🔹 Login
+export async function loginUser(email, senha) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, senha }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao fazer login:", error);
+    return { success: false, error: "Erro de conexão com o servidor" };
+  }
 }
 
-async function registerUser(nome, email, senha) {
-    try {
-        const response = await fetch('/api/usuario', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, email, senha })
-        });
-        
-        const user = await response.json();
-        return { success: true, user, message: 'Usuário cadastrado com sucesso!' };
-    } catch (error) {
-        return { success: false, error: 'Erro ao cadastrar usuário' };
-    }
+// 🔹 Cadastro
+export async function registerUser(nome, email, senha) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/usuarios`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, email, senha }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao cadastrar usuário:", error);
+    return { success: false, error: "Erro de conexão com o servidor" };
+  }
 }
 
-async function loginUser(email, senha) {
-    try {
-        const users = await getAllUsers();
-        
-        if (Array.isArray(users)) {
-            const user = users.find(u => u.email === email && u.senha === senha);
-            
-            if (user) {
-                return {
-                    success: true,
-                    user: {
-                        id: user.id,
-                        nome: user.nome,
-                        email: user.email
-                    },
-                    message: 'Login realizado com sucesso!'
-                };
-            }
-        }
-        
-        return { success: false, error: 'Email ou senha incorretos' };
-    } catch (error) {
-        return { success: false, error: 'Erro na conexão' };
-    }
+// 🔹 Listar todos os usuários (opcional, teste)
+export async function getUsuarios() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/usuarios`);
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    return [];
+  }
 }
