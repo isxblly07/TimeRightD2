@@ -38,7 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (result.success) {
         // Salva apenas o nome do usuário
-        localStorage.setItem('timeright_user', JSON.stringify({ nome: result.user.nome || result.user.Nome }));
+        localStorage.setItem(
+            "timeright_user",
+            JSON.stringify({
+                nome: result.user.nome || result.user.Nome,
+                email: result.user.email,
+                admin: result.user.admin === true || result.user.admin === 1, // 🔥 salva info de admin
+            })
+);
         window.location.href = 'admin.html';
     } else {
         alert(result.error || "Usuário ou senha inválidos.");
