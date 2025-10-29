@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TimeRight - Admin</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .table { width:100%; border-collapse: collapse; margin-top:20px; }
+  .table th, .table td { padding:8px 12px; border:1px solid #ddd; text-align:left; }
+  .btn { padding:6px 10px; border-radius:6px; cursor:pointer; }
+  .btn-disable { background:#ff7043; color:#fff; border:none; }
+  .btn-enable { background:#4caf50; color:#fff; border:none; }
+  .status-active { color:green; font-weight:600 }
+  .status-disabled { color:#b71c1c; font-weight:600 }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">TimeRight - Admin</h1>
+    <h2 id="welcome-message" class="welcome">Bem-vinda</h2>
+
+    <div id="admin-controls" style="display:none;">
+      <h3>Gerenciar usuários</h3>
+      <table class="table" id="users-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nome</th><th>Email</th><th>Status</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <button onclick="logout()" class="btn-logout">Sair</button>
+  </div>
+
+<script>
+const API_BASE = "http://localhost:3000"; // ajuste se necessário
+
+window.addEventListener("load", async () => {
+  const user = localStorage.getItem("timeright_user");
+  if (!user) { window.location.href = "index.html"; return; }
+
+  const userData = JSON.parse(user);
+  document.getElementById("welcome-message").textContent = `Bem-vinda, ${userData.nome || 'Usuário'}!`;
+
+  if (userData.admin === true || userData.admin === 1) {
+    document.getElementById("admin-controls").style.display = "block";
+    await loadUsers();
+  } else {
+    console.warn("Usuário não é admin; controles ocultos.");
+  }
+});
+
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API_BASE}/api/usuarios`);
+    if (!res.ok) throw new Error("Erro ao buscar usuários");
+
+    const users = await res.json();
+    const tbody = document.querySelector("#users-table tbody");
+    tbody.innerHTML = "";
+
+    users.forEach(u => {
+      const tr = document.createElement("tr");
+      const ativo = u.cod_status === "1" || u.cod_status === true;
+      tr.innerHTML = `
+        <td>${u.id}</td>
+        <td>${escapeHtml(u.nome)}</td>
+        <td>${escapeHtml(u.email)}</td>
+        <td class="${ativo ? "status-active" : "status-disabled"}">
+          ${ativo ? "Ativo" : "Desativado"}
+        </td>
+        <td>
+          <button class="btn ${ativo ? "btn-disable" : "btn-enable"}"
+            onclick="toggleUser(${u.id}, ${ativo ? 0 : 1})">
+            ${ativo ? "Desabilitar" : "Habilitar"}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao carregar usuários.");
+  }
+}
+
+// ✅ Ativa/desativa usuário e atualiza a tabela automaticamente
+async function toggleUser(id, targetStatus) {
+  const actionText = targetStatus === 0 ? "desabilitar" : "habilitar";
+  if (!confirm(`Tem certeza que deseja ${actionText} este usuário?`)) return;
+
+  const caller = JSON.parse(localStorage.getItem("timeright_user") || "{}");
+  try {
+    const res = await fetch(`${API_BASE}/api/usuarios/${id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailCaller: caller.email, cod_status: targetStatus })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      alert(data.message || "Status atualizado com sucesso.");
+      await loadUsers(); // 🔄 Atualiza a tabela automaticamente
+    } else {
+      alert(data.error || "Falha ao atualizar status.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao conectar ao servidor.");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("timeright_user");
+  window.location.href = "index.html";
+}
+
+// Evita XSS
+function escapeHtml(unsafe) {
+  if (!unsafe && unsafe !== 0) return "";
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+</script>
+</body>
+</html>
